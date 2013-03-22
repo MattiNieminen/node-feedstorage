@@ -22,7 +22,8 @@
   "gitHead": "044a8e06bdb1fe85e4844b5c860c5c7eb7cdac6e",
   "devDependencies": {
    "mongoose": "",
-   "feedparser": ""
+   "feedparser": "",
+   "request": ""
  }
   
 }
