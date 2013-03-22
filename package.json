@@ -1,0 +1,23 @@
+{
+  "name": "node-feedstorage",
+  "version": "0.0.1",
+  "description": "Storage for feed URLs and feed items using MongoDB.",
+  "main": "lib/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MattiNieminen/node-feedstorage.git"
+  },
+  "keywords": [
+    "feed",
+    "atom",
+    "rss",
+    "mongodb"
+  ],
+  "author": "Matti Nieminen",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "gitHead": "044a8e06bdb1fe85e4844b5c860c5c7eb7cdac6e"
+}
