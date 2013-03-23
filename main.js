@@ -18,6 +18,8 @@ var feedSchema = mongoose.Schema({
     categories:       [String]
 });
 
+var Feed = mongoose.model('Feed', feedSchema);
+
 function connect(uri, database, port) {
     port = typeof port !== 'undefined' ? port : 27017;
     mongoose.connect(uri, database, port);
