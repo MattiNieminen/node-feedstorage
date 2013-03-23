@@ -92,7 +92,8 @@ function handleResponse(url, error, response, body) {
     else if (response.statusCode == 200) {
         feedparser.parseString(body)
         .on('meta', function(meta) { saveFeedMeta(meta, url) })
-        .on('article', saveArticle);
+        .on('article', saveArticle)
+        .on('error', function(error) { handleParseError(error, url) });
     }
     else if (response.statusCode == 304) {
         console.log('Feed '+url+' not modified (304). Skipping parsing.' );
@@ -101,6 +102,10 @@ function handleResponse(url, error, response, body) {
         console.warn('HTTP status code received that can not be handled by '
             + 'this module: '+response.statusCode);
     }
+}
+
+function handleParseError(error, url) {
+    console.error('Could not parse feed at '+url+'. '+error);
 }
 
 function saveFeedMeta(meta, url) {
