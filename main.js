@@ -55,7 +55,6 @@ function addFeed(url) {
             }
         }
     });
-
 }
 
 function createRequest(url) {
