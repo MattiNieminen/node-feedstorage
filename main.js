@@ -97,7 +97,7 @@ function saveFeedMeta(meta, url) {
             console.error('Failed to save feed meta to MongoDB: '+error);
         }
         else {
-            console.log('Added new feed "'+feedDocument.title+'" to MongoDB');
+            console.log('Added new feed "'+feedDocument.url+'" to MongoDB');
         }
         
     });
