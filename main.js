@@ -2,6 +2,22 @@ var mongoose = require('mongoose');
 var feedparser = require('feedparser')
 var request = require('request');
 
+var feedSchema = mongoose.Schema({
+    title:            String,
+    description:      String,
+    link:             String,
+    xmlUrl:           String,
+    date:             { type: Date, default: Date.now },
+    pubDate:          { type: Date, default: Date.now },
+    author:           String,
+    language:         String,
+    image:            { title: String, url: String },
+    favicon:          String,
+    copyright:        String,
+    generator:        String,
+    categories:       [String]
+});
+
 function connect(uri, database, port) {
     port = typeof port !== 'undefined' ? port : 27017;
     mongoose.connect(uri, database, port);
