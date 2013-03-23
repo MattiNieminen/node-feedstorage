@@ -76,7 +76,7 @@ function handleResponse(url, error, response, body) {
         .on('article', saveArticle);
     }
     else if (response.statusCode == 304) {
-        //HTTP status code for not modified, do nothing
+        console.log('Feed '+url+' not modified (304). Skipping parsing.' );
     }
     else {
         console.warn('HTTP status code received that can not be handled by '
