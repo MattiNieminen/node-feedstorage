@@ -21,6 +21,25 @@ var feedSchema = mongoose.Schema({
 
 var Feed = mongoose.model('Feed', feedSchema);
 
+var articleSchema = mongoose.Schema({
+    title:            String,
+    description:      String,
+    link:             String,
+    origLink:         String,
+    date:             { type: Date, default: Date.now },
+    pubDate:          { type: Date, default: Date.now },
+    author:           String,
+    guid:             String,
+    comments:         String,
+    image:            { title: String, url: String },
+    categories:       [String],
+    source:           { title: String, url: String },
+    enclosures:       [Object]
+    //TODO population
+});
+
+var Article = mongoose.model('Article', articleSchema);
+
 function connect(uri, database, port) {
     port = typeof port !== 'undefined' ? port : 27017;
     mongoose.connect(uri, database, port);
