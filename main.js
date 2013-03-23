@@ -26,7 +26,7 @@ function connect(uri, database, port) {
     mongoose.connect(uri, database, port);
     
     mongoose.connection.on('error', function(e){
-        console.log("Could not connect to MongoDB: "+e.message);
+        console.error("Could not connect to MongoDB: "+e.message);
         process.exit(1);
     });
     
@@ -48,7 +48,7 @@ function createRequest(url) {
 
 function handleResponse(url, error, response, body) {
     if(error != null) {
-        console.log('error: '+error);
+        console.error('error: '+error);
     }
     else if (response.statusCode == 200) {
         feedparser.parseString(body)
@@ -59,7 +59,7 @@ function handleResponse(url, error, response, body) {
         //HTTP status code for not modified, do nothing
     }
     else {
-        console.log('HTTP status code received that can not be handled by this '
+        console.warn('HTTP status code received that can not be handled by this '
             + 'module: '+response.statusCode);
     }
 }
@@ -74,7 +74,7 @@ function saveFeedMeta(meta, url) {
         
     feedDocument.save(function (error, feedDocument) {
         if(error != null) {
-            console.log('Failed to save feed meta to MongoDB: '+error);
+            console.error('Failed to save feed meta to MongoDB: '+error);
         }
         else {
             //Saved the metadata, do nothing
