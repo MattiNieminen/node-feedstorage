@@ -59,8 +59,8 @@ function handleResponse(url, error, response, body) {
         //HTTP status code for not modified, do nothing
     }
     else {
-        console.warn('HTTP status code received that can not be handled by this '
-            + 'module: '+response.statusCode);
+        console.warn('HTTP status code received that can not be handled by '
+            + 'this module: '+response.statusCode);
     }
 }
 
