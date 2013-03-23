@@ -3,7 +3,7 @@ var feedparser = require('feedparser')
 var request = require('request');
 
 var feedSchema = mongoose.Schema({
-    url:              { type: String, required: true },
+    url:              { type: String, required: true, unique: true },
     title:            String,
     description:      String,
     link:             String,
