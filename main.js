@@ -123,7 +123,22 @@ function saveFeedMeta(meta, url) {
 }
 
 function saveArticle(article) {
-
+    var articleDocument = new Article({ title: article.title,
+        description: article.description, link: article.link,
+        origLink: article.origLink, guid: article.guid,
+        comments: article.comments, image: article.image,
+        categories: article.categories, source: article.source,
+        enclosures: article.enclosures });
+        
+    articleDocument.save(function (error, articleDocument) {
+        if(error != null) {
+            console.error('Failed to save article to MongoDB: '+error);
+        }
+        else {
+            console.log('Added new article "'+articleDocument.guid
+            + '" to MongoDB');
+        }
+    });
 }
 
 exports.connect = connect;
