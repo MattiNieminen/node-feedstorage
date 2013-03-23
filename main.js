@@ -36,9 +36,26 @@ function connect(uri, database, port) {
 }
 
 function addFeed(url) {
-    //TODO CHECK IF EXISTING, ELSE MAKE REQUEST AND PARSE
-    request(createRequest(url), function(error, response, body)
-        { handleResponse(url, error, response, body) });
+    Feed.count({ url: url }, function(error, count) {
+        if(error != null) {
+            console.error('Failed to check if feed exists in MongoDB: '+error);
+        }
+        else {
+            if(count == 0) {
+                request(createRequest(url), function(error, response, body)
+                    { handleResponse(url, error, response, body) });
+            }
+            else if(count == 1) {
+                console.log('Feed '+url+' already exists in the MongoDB. '
+                + 'Skipping database write.');
+            }
+            else {
+                console.error('Multiple documents with same url exist in '
+                + 'MongoDB. This should not happen!');
+            }
+        }
+    });
+
 }
 
 function createRequest(url) {
