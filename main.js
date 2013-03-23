@@ -34,7 +34,7 @@ var articleSchema = mongoose.Schema({
     image:            { title: String, url: String },
     categories:       [String],
     source:           { title: String, url: String },
-    enclosures:       [Object]
+    enclosures:       [{ url: String, type: String, length: String }]
     //TODO population
 });
 
