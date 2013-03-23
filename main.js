@@ -42,8 +42,7 @@ function addFeed(url) {
         }
         else {
             if(count == 0) {
-                request(createRequest(url), function(error, response, body)
-                    { handleResponse(url, error, response, body) });
+               requestAndParseFeed(url);
             }
             else if(count == 1) {
                 console.log('Feed '+url+' already exists in the MongoDB. '
@@ -55,6 +54,11 @@ function addFeed(url) {
             }
         }
     });
+}
+
+function requestAndParseFeed(url) {
+    request(createRequest(url), function(error, response, body)
+        { handleResponse(url, error, response, body) });
 }
 
 function createRequest(url) {
