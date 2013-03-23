@@ -3,6 +3,7 @@ var feedparser = require('feedparser')
 var request = require('request');
 
 var feedSchema = mongoose.Schema({
+    url:              String,
     title:            String,
     description:      String,
     link:             String,
@@ -34,35 +35,52 @@ function connect(uri, database, port) {
     });
 }
 
-function addFeed(uri) {
+function addFeed(url) {
     //TODO CHECK IF EXISTING, ELSE MAKE REQUEST AND PARSE
-    request(createRequest(uri), handleResponse);
+    request(createRequest(url), function(error, response, body)
+        { handleResponse(url, error, response, body) });
 }
 
-function createRequest(uri) {
-    var request = { uri: uri };
+function createRequest(url) {
+    var request = { uri: url };
     return request;
 }
 
-function handleResponse(error, response, body) {
+function handleResponse(url, error, response, body) {
     if(error != null) {
         console.log('error: '+error);
     }
     else if (response.statusCode == 200) {
         feedparser.parseString(body)
-        .on('meta', saveFeedMeta)
+        .on('meta', function(meta) { saveFeedMeta(meta, url) })
         .on('article', saveArticle);
     }
     else if (response.statusCode == 304) {
         //HTTP status code for not modified, do nothing
     }
     else {
-        console.log('HTTP status code received that can not be handled by this module: '+response.statusCode);
+        console.log('HTTP status code received that can not be handled by this '
+            + 'module: '+response.statusCode);
     }
 }
 
-function saveFeedMeta(meta) {
-
+function saveFeedMeta(meta, url) {
+    var feedDocument = new Feed({ url: url, title: meta.title,
+        description: meta.description, link: meta.link, xmlUrl: meta.xmlUrl,
+        date: meta.date, pubDate: meta.pubDate, author: meta.author,
+        language: meta.language, image: meta.image, favicon: meta.favicon,
+        copyright: meta.copyright, generator: meta.generator,
+        categories: meta.categories });
+        
+    feedDocument.save(function (error, feedDocument) {
+        if(error != null) {
+            console.log('Failed to save feed meta to MongoDB: '+error);
+        }
+        else {
+            //Saved the metadata, do nothing
+        }
+        
+    });
 }
 
 function saveArticle(article) {
