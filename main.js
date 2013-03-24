@@ -3,7 +3,7 @@ var feedparser = require('feedparser')
 var request = require('request');
 
 var feedSchema = mongoose.Schema({
-    url:              { type: String, required: true, unique: true },
+    _id:              { type: String, required: true, unique: true },
     title:            String,
     description:      String,
     link:             String,
@@ -17,6 +17,14 @@ var feedSchema = mongoose.Schema({
     copyright:        String,
     generator:        String,
     categories:       [String]
+});
+
+feedSchema.virtual('url').get(function () {
+  return this._id;
+});
+
+feedSchema.virtual('url').set(function (url) {
+  this._id = url;
 });
 
 var Feed = mongoose.model('Feed', feedSchema);
@@ -34,8 +42,8 @@ var articleSchema = mongoose.Schema({
     image:            { title: String, url: String },
     categories:       [String],
     source:           { title: String, url: String },
-    enclosures:       [{ url: String, type: String, length: String }]
-    //TODO population
+    enclosures:       [{ url: String, type: String, length: String }],
+    feed:             { type: String, ref: 'Feed' },
 });
 
 var Article = mongoose.model('Article', articleSchema);
@@ -92,7 +100,7 @@ function handleResponse(url, error, response, body) {
     else if (response.statusCode == 200) {
         feedparser.parseString(body)
         .on('meta', function(meta) { saveOrUpdateFeedMeta(meta, url) })
-        .on('article', saveOrUpdateArticle)
+        .on('article', function(article) { saveOrUpdateArticle(article, url) })
         .on('error', function(error) { handleParseError(error, url) });
     }
     else if (response.statusCode == 304) {
@@ -197,24 +205,24 @@ function createFeedDocument(meta, url) {
         categories: meta.categories });
 }
 
-function saveOrUpdateArticle(article) {
+function saveOrUpdateArticle(article, url) {
     Article.findOne({ guid: article.guid }, function(error, articleDocument) {
         if(error != null) {
             console.error('Failed to get article from MongoDB: '+error);
         }
         else {
             if(articleDocument == null) {
-                saveArticle(article);
+                saveArticle(article, url);
             }
             else {
-                updateArticle(articleDocument, article);
+                updateArticle(articleDocument, article, url);
             }
         }
     });  
 }
 
-function saveArticle(article) {
-    var articleDocument = createArticleDocument(article);
+function saveArticle(article, url) {
+    var articleDocument = createArticleDocument(article, url);
         
     articleDocument.save(function (error, articleDocument) {
         if(error != null) {
@@ -227,17 +235,17 @@ function saveArticle(article) {
     });
 }
 
-function updateArticle(articleDocument, article) {
+function updateArticle(articleDocument, article, url) {
     console.log('Should update article, but not yet implemented.');
 }
 
-function createArticleDocument(article) {
+function createArticleDocument(article, url) {
     return new Article({ title: article.title,
         description: article.description, link: article.link,
         origLink: article.origLink, guid: article.guid,
         comments: article.comments, image: article.image,
         categories: article.categories, source: article.source,
-        enclosures: article.enclosures });
+        enclosures: article.enclosures, feed: url });
 }
 
 function updateDatabase() {
