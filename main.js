@@ -146,5 +146,21 @@ function saveArticle(article) {
     });
 }
 
+function updateDatabase() {
+    Feed.find(function(error, feedDocuments) {
+        if(error != null) {
+            console.error('Failed to get feeds from MongoDB: '+error);
+        }
+        else {
+            feedDocuments.forEach(function(feedDocument) {
+                console.log('Updating feed '+feedDocument.url);
+                requestAndParseFeed(feedDocument.url);
+            });
+            
+        }
+    });
+}
+
 exports.connect = connect;
 exports.addFeed = addFeed;
+exports.updateDatabase = updateDatabase
