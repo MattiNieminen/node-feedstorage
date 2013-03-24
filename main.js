@@ -8,8 +8,8 @@ var feedSchema = mongoose.Schema({
     description:      String,
     link:             String,
     xmlUrl:           String,
-    date:             { type: Date, default: Date.now },
-    pubDate:          { type: Date, default: Date.now },
+    date:             { type: Date },
+    pubDate:          { type: Date },
     author:           String,
     language:         String,
     image:            { title: String, url: String },
@@ -34,8 +34,8 @@ var articleSchema = mongoose.Schema({
     description:      String,
     link:             String,
     origLink:         String,
-    date:             { type: Date, default: Date.now },
-    pubDate:          { type: Date, default: Date.now },
+    date:             { type: Date },
+    pubDate:          { type: Date },
     author:           String,
     guid:             String,
     comments:         String,
@@ -215,7 +215,7 @@ function saveOrUpdateArticle(article, url) {
                 saveArticle(article, url);
             }
             else {
-                updateArticle(articleDocument, article, url);
+                updateArticle(articleDocument, article);
             }
         }
     });  
@@ -236,7 +236,58 @@ function saveArticle(article, url) {
 }
 
 function updateArticle(articleDocument, article) {
-    console.log('Should update article, but not yet implemented.');
+    if(!articleEqualsWithMeta(articleDocument, article)) {
+        articleDocument.title = article.title;
+        articleDocument.description = article.description;
+        articleDocument.link = article.link;
+        articleDocument.xmlUrl = article.xmlUrl;
+        articleDocument.date = article.date;
+        articleDocument.pubDate = article.pubDate;
+        articleDocument.author = article.author;
+        articleDocument.language = article.language;
+        articleDocument.image = article.image;
+        articleDocument.favicon = article.favicon;
+        articleDocument.copyright = article.copyright;
+        articleDocument.generator = article.generator;
+        articleDocument.categories = article.categories;
+    
+        articleDocument.save(function (error, feedDocument) {
+            if(error != null) {
+                console.error('Failed to update article to MongoDB: '+error);
+            }
+            else {
+                console.log('Updated article "'+articleDocument.guid+'" in MongoDB.');
+            }
+        });
+    } 
+}
+
+function articleEqualsWithMeta(articleDocument, article) {
+    var equals = false;
+    
+    if(articleDocument.title == article.title &&
+        articleDocument.description == article.description &&
+        articleDocument.link == article.link &&
+        articleDocument.origLink == article.origLink &&
+        articleDocument.date.getTime() == article.date.getTime() &&
+        articleDocument.pubDate.getTime() == article.pubDate.getTime() &&
+        articleDocument.author == article.author &&
+        articleDocument.guid == article.guid &&
+        articleDocument.comments == article.comments &&
+        articleDocument.image.title == article.image.title &&
+        articleDocument.image.url == article.image.url &&
+        JSON.stringify(articleDocument.categories) ==
+            JSON.stringify(article.categories) &&
+        articleDocument.source.title == article.source.title &&
+        articleDocument.source.url == article.source.url &&
+        articleDocument.enclosures.url == article.enclosures.url &&
+        articleDocument.enclosures.type == article.enclosures.type &&
+        articleDocument.enclosures.length == article.enclosures.length) {        
+        equals = true;
+    }
+    
+    return equals;
+      
 }
 
 function createArticleDocument(article, url) {
