@@ -72,7 +72,7 @@ function addFeed(url) {
                requestAndParseFeed(url);
             }
             else if(count == 1) {
-                console.log('Feed '+url+' already exists in the MongoDB. '
+                console.warn('Feed '+url+' already exists in the MongoDB. '
                 + 'Skipping database write.');
             }
             else {
