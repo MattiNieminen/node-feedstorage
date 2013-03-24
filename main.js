@@ -138,7 +138,7 @@ function saveFeedMeta(meta, url) {
 }
 
 function updateFeedMeta(feedDocument, meta, url) {
-    if(!feedsEqual) {
+    if(!feedEqualsWithMeta(feedDocument, meta)) {
         feedDocument.title = meta.title;
         feedDocument.description = meta.description;
         feedDocument.link = meta.link;
@@ -164,23 +164,24 @@ function updateFeedMeta(feedDocument, meta, url) {
     } 
 }
 
-function feedsEqual(feedDocument1, feedDocument2) {
+function feedEqualsWithMeta(feedDocument, meta) {
     var equals = false;
     
-    if(feedDocument1.url == feedDocument2.url &&
-        feedDocument1.title == feedDocument2.title &&
-        feedDocument1.description == feedDocument2.description &&
-        feedDocument1.link == feedDocument2.link &&
-        feedDocument1.xmlUrl == feedDocument2.xmlUrl &&
-        feedDocument1.date == feedDocument2.date &&
-        feedDocument1.pubDate == feedDocument2.pubDate &&
-        feedDocument1.author == feedDocument2.author &&
-        feedDocument1.language == feedDocument2.language &&
-        feedDocument1.image == feedDocument2.image &&
-        feedDocument1.favicon == feedDocument2.favicon &&
-        feedDocument1.copyright == feedDocument2.copyright &&
-        feedDocument1.generator == feedDocument2.generator &&
-        feedDocument1.categories == feedDocument2.categories) {
+    if(feedDocument.title == meta.title &&
+        feedDocument.description == meta.description &&
+        feedDocument.link == meta.link &&
+        feedDocument.xmlUrl == meta.xmlUrl &&
+        feedDocument.date == meta.date &&
+        feedDocument.pubDate == meta.pubDate &&
+        feedDocument.author == meta.author &&
+        feedDocument.language == meta.language &&
+        feedDocument.image.title == meta.image.title &&
+        feedDocument.image.url == meta.image.url &&
+        feedDocument.favicon == meta.favicon &&
+        feedDocument.copyright == meta.copyright &&
+        feedDocument.generator == meta.generator &&
+        JSON.stringify(feedDocument.categories) ==
+            JSON.stringify(meta.categories)) {        
         equals = true;
     }
     
