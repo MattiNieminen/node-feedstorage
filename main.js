@@ -201,4 +201,4 @@ function updateDatabase() {
 
 exports.connect = connect;
 exports.addFeed = addFeed;
-exports.updateDatabase = updateDatabase
+exports.updateDatabase = updateDatabase;
