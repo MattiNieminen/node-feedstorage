@@ -139,7 +139,6 @@ function saveFeedMeta(meta, url) {
         else {
             console.log('Added new feed "'+feedDocument.url+'" to MongoDB');
         }
-        
     });
 }
 
@@ -196,7 +195,6 @@ function updateDatabase() {
                 console.log('Updating feed '+feedDocument.url);
                 requestAndParseFeed(feedDocument.url);
             });
-            
         }
     });
 }
