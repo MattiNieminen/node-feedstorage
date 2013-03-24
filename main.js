@@ -125,12 +125,7 @@ function saveOrUpdateFeedMeta(meta, url) {
 }
 
 function saveFeedMeta(meta, url) {
-    var feedDocument = new Feed({ url: url, title: meta.title,
-        description: meta.description, link: meta.link, xmlUrl: meta.xmlUrl,
-        date: meta.date, pubDate: meta.pubDate, author: meta.author,
-        language: meta.language, image: meta.image, favicon: meta.favicon,
-        copyright: meta.copyright, generator: meta.generator,
-        categories: meta.categories });
+    var feedDocument = createFeedDocument(meta, url);
         
     feedDocument.save(function (error, feedDocument) {
         if(error != null) {
@@ -144,6 +139,15 @@ function saveFeedMeta(meta, url) {
 
 function updateFeedMeta(feedDocument, meta) {
     console.log('Should update feed, but not yet implemented.');
+}
+
+function createFeedDocument(meta, url) {
+    return new Feed({ url: url, title: meta.title,
+        description: meta.description, link: meta.link, xmlUrl: meta.xmlUrl,
+        date: meta.date, pubDate: meta.pubDate, author: meta.author,
+        language: meta.language, image: meta.image, favicon: meta.favicon,
+        copyright: meta.copyright, generator: meta.generator,
+        categories: meta.categories });
 }
 
 function saveOrUpdateArticle(article) {
