@@ -91,7 +91,7 @@ function handleResponse(url, error, response, body) {
     }
     else if (response.statusCode == 200) {
         feedparser.parseString(body)
-        .on('meta', function(meta) { saveFeedMeta(meta, url) })
+        .on('meta', function(meta) { saveOrUpdateFeedMeta(meta, url) })
         .on('article', saveArticle)
         .on('error', function(error) { handleParseError(error, url) });
     }
@@ -106,6 +106,22 @@ function handleResponse(url, error, response, body) {
 
 function handleParseError(error, url) {
     console.error('Could not parse feed at '+url+'. '+error);
+}
+
+function saveOrUpdateFeedMeta(meta, url) {
+    Feed.findOne({ url: url }, function(error, feedDocument) {
+        if(error != null) {
+            console.error('Failed to get feed from MongoDB: '+error);
+        }
+        else {
+            if(feedDocument == null) {
+                saveFeedMeta(meta, url);
+            }
+            else {
+                updateFeedMeta(feedDocument, meta);
+            }
+        }
+    });  
 }
 
 function saveFeedMeta(meta, url) {
@@ -125,6 +141,10 @@ function saveFeedMeta(meta, url) {
         }
         
     });
+}
+
+function updateFeedMeta(feedDocument, meta) {
+    console.log('Should update feed, but not yet implemented.');
 }
 
 function saveArticle(article) {
