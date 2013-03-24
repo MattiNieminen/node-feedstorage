@@ -179,8 +179,6 @@ function feedRequiresUpdate(feedDocument, meta) {
         feedDocument.description == meta.description &&
         feedDocument.link == meta.link &&
         feedDocument.xmlUrl == meta.xmlUrl &&
-        feedDocument.date == meta.date &&
-        feedDocument.pubDate == meta.pubDate &&
         feedDocument.author == meta.author &&
         feedDocument.language == meta.language &&
         feedDocument.image.title == meta.image.title &&
@@ -269,8 +267,6 @@ function articleRequiresUpdate(articleDocument, article) {
         articleDocument.description == article.description &&
         articleDocument.link == article.link &&
         articleDocument.origLink == article.origLink &&
-        //articleDocument.date == article.date &&
-        //articleDocument.pubDate == article.pubDate &&
         articleDocument.author == article.author &&
         articleDocument.guid == article.guid &&
         articleDocument.comments == article.comments &&
