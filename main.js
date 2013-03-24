@@ -228,7 +228,7 @@ function saveArticle(article, url) {
         }
         else {
             console.log('Added new article "'+articleDocument.guid
-            + '" to MongoDB');
+            + '" to MongoDB.');
         }
     });
 }
