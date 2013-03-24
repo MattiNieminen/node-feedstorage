@@ -145,7 +145,7 @@ function saveFeedMeta(meta, url) {
     });
 }
 
-function updateFeedMeta(feedDocument, meta, url) {
+function updateFeedMeta(feedDocument, meta) {
     if(!feedEqualsWithMeta(feedDocument, meta)) {
         feedDocument.title = meta.title;
         feedDocument.description = meta.description;
@@ -235,7 +235,7 @@ function saveArticle(article, url) {
     });
 }
 
-function updateArticle(articleDocument, article, url) {
+function updateArticle(articleDocument, article) {
     console.log('Should update article, but not yet implemented.');
 }
 
