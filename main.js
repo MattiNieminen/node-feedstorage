@@ -117,7 +117,7 @@ function handleParseError(error, url) {
 }
 
 function saveOrUpdateFeedMeta(meta, url) {
-    Feed.findOne({ url: url }, function(error, feedDocument) {
+    Feed.findOne({ _id: url }, function(error, feedDocument) {
         if(error != null) {
             console.error('Failed to get feed from MongoDB: '+error);
         }
