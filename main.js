@@ -289,7 +289,7 @@ function articleRequiresUpdate(articleDocument, article) {
 function createArticleDocument(article, url) {
     return new Article({ title: article.title,
         description: article.description, link: article.link,
-        origLink: article.origLink, guid: article.guid,
+        origLink: article.origLink, author: article.author, guid: article.guid,
         comments: article.comments, image: article.image,
         categories: article.categories, source: article.source,
         enclosures: article.enclosures, feed: url });
