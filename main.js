@@ -167,12 +167,7 @@ function saveOrUpdateArticle(article) {
 }
 
 function saveArticle(article) {
-    var articleDocument = new Article({ title: article.title,
-        description: article.description, link: article.link,
-        origLink: article.origLink, guid: article.guid,
-        comments: article.comments, image: article.image,
-        categories: article.categories, source: article.source,
-        enclosures: article.enclosures });
+    var articleDocument = createArticleDocument(article);
         
     articleDocument.save(function (error, articleDocument) {
         if(error != null) {
@@ -187,6 +182,15 @@ function saveArticle(article) {
 
 function updateArticle(articleDocument, article) {
     console.log('Should update article, but not yet implemented.');
+}
+
+function createArticleDocument(article) {
+    return new Article({ title: article.title,
+        description: article.description, link: article.link,
+        origLink: article.origLink, guid: article.guid,
+        comments: article.comments, image: article.image,
+        categories: article.categories, source: article.source,
+        enclosures: article.enclosures });
 }
 
 function updateDatabase() {
