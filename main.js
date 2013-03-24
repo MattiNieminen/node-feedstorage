@@ -146,7 +146,7 @@ function saveFeedMeta(meta, url) {
 }
 
 function updateFeedMeta(feedDocument, meta) {
-    if(!feedEqualsWithMeta(feedDocument, meta)) {
+    if(!feedRequiresUpdate(feedDocument, meta)) {
         feedDocument.title = meta.title;
         feedDocument.description = meta.description;
         feedDocument.link = meta.link;
@@ -172,8 +172,8 @@ function updateFeedMeta(feedDocument, meta) {
     } 
 }
 
-function feedEqualsWithMeta(feedDocument, meta) {
-    var equals = false;
+function feedRequiresUpdate(feedDocument, meta) {
+    var requiresUpdate = false;
     
     if(feedDocument.title == meta.title &&
         feedDocument.description == meta.description &&
@@ -190,10 +190,10 @@ function feedEqualsWithMeta(feedDocument, meta) {
         feedDocument.generator == meta.generator &&
         JSON.stringify(feedDocument.categories) ==
             JSON.stringify(meta.categories)) {        
-        equals = true;
+        requiresUpdate = true;
     }
     
-    return equals;
+    return requiresUpdate;
 }
 
 function createFeedDocument(meta, url) {
@@ -236,7 +236,7 @@ function saveArticle(article, url) {
 }
 
 function updateArticle(articleDocument, article) {
-    if(!articleEqualsWithMeta(articleDocument, article)) {
+    if(!articleRequiresUpdate(articleDocument, article)) {
         articleDocument.title = article.title;
         articleDocument.description = article.description;
         articleDocument.link = article.link;
@@ -262,15 +262,15 @@ function updateArticle(articleDocument, article) {
     } 
 }
 
-function articleEqualsWithMeta(articleDocument, article) {
-    var equals = false;
+function articleRequiresUpdate(articleDocument, article) {
+    var requiresUpdate = false;
     
     if(articleDocument.title == article.title &&
         articleDocument.description == article.description &&
         articleDocument.link == article.link &&
         articleDocument.origLink == article.origLink &&
-        articleDocument.date.getTime() == article.date.getTime() &&
-        articleDocument.pubDate.getTime() == article.pubDate.getTime() &&
+        //articleDocument.date == article.date &&
+        //articleDocument.pubDate == article.pubDate &&
         articleDocument.author == article.author &&
         articleDocument.guid == article.guid &&
         articleDocument.comments == article.comments &&
@@ -283,10 +283,10 @@ function articleEqualsWithMeta(articleDocument, article) {
         articleDocument.enclosures.url == article.enclosures.url &&
         articleDocument.enclosures.type == article.enclosures.type &&
         articleDocument.enclosures.length == article.enclosures.length) {        
-        equals = true;
+        requiresUpdate = true;
     }
     
-    return equals;
+    return requiresUpdate;
       
 }
 
