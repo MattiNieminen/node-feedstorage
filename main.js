@@ -63,7 +63,7 @@ function connect(uri, database, port) {
 }
 
 function addFeed(url) {
-    Feed.count({ url: url }, function(error, count) {
+    Feed.count({ _id: url }, function(error, count) {
         if(error != null) {
             console.error('Failed to check if feed exists in MongoDB: '+error);
         }
