@@ -92,7 +92,7 @@ function handleResponse(url, error, response, body) {
     else if (response.statusCode == 200) {
         feedparser.parseString(body)
         .on('meta', function(meta) { saveOrUpdateFeedMeta(meta, url) })
-        .on('article', saveArticle)
+        .on('article', saveOrUpdateArticle)
         .on('error', function(error) { handleParseError(error, url) });
     }
     else if (response.statusCode == 304) {
@@ -147,6 +147,22 @@ function updateFeedMeta(feedDocument, meta) {
     console.log('Should update feed, but not yet implemented.');
 }
 
+function saveOrUpdateArticle(article) {
+    Article.findOne({ guid: article.guid }, function(error, articleDocument) {
+        if(error != null) {
+            console.error('Failed to get article from MongoDB: '+error);
+        }
+        else {
+            if(articleDocument == null) {
+                saveArticle(article);
+            }
+            else {
+                updateArticle(articleDocument, article);
+            }
+        }
+    });  
+}
+
 function saveArticle(article) {
     var articleDocument = new Article({ title: article.title,
         description: article.description, link: article.link,
@@ -164,6 +180,10 @@ function saveArticle(article) {
             + '" to MongoDB');
         }
     });
+}
+
+function updateArticle(articleDocument, article) {
+    console.log('Should update article, but not yet implemented.');
 }
 
 function updateDatabase() {
