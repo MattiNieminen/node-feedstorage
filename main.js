@@ -302,7 +302,8 @@ function updateDatabase() {
         }
         else {
             feedDocuments.forEach(function(feedDocument) {
-                console.log('Updating feed '+feedDocument.url);
+                console.log('Updating feed and articles from '
+                + feedDocument.url);
                 requestAndParseFeed(feedDocument.url);
             });
         }
