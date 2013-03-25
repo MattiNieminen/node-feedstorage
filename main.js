@@ -146,7 +146,7 @@ function saveFeedMeta(meta, url) {
 }
 
 function updateFeedMeta(feedDocument, meta) {
-    if(!feedRequiresUpdate(feedDocument, meta)) {
+    if(feedRequiresUpdate(feedDocument, meta)) {
         feedDocument.title = meta.title;
         feedDocument.description = meta.description;
         feedDocument.link = meta.link;
@@ -175,18 +175,18 @@ function updateFeedMeta(feedDocument, meta) {
 function feedRequiresUpdate(feedDocument, meta) {
     var requiresUpdate = false;
     
-    if(feedDocument.title == meta.title &&
-        feedDocument.description == meta.description &&
-        feedDocument.link == meta.link &&
-        feedDocument.xmlUrl == meta.xmlUrl &&
-        feedDocument.author == meta.author &&
-        feedDocument.language == meta.language &&
-        feedDocument.image.title == meta.image.title &&
-        feedDocument.image.url == meta.image.url &&
-        feedDocument.favicon == meta.favicon &&
-        feedDocument.copyright == meta.copyright &&
-        feedDocument.generator == meta.generator &&
-        JSON.stringify(feedDocument.categories) ==
+    if(feedDocument.title != meta.title &&
+        feedDocument.description != meta.description &&
+        feedDocument.link != meta.link &&
+        feedDocument.xmlUrl != meta.xmlUrl &&
+        feedDocument.author != meta.author &&
+        feedDocument.language != meta.language &&
+        feedDocument.image.title != meta.image.title &&
+        feedDocument.image.url != meta.image.url &&
+        feedDocument.favicon != meta.favicon &&
+        feedDocument.copyright != meta.copyright &&
+        feedDocument.generator != meta.generator &&
+        JSON.stringify(feedDocument.categories) !=
             JSON.stringify(meta.categories)) {        
         requiresUpdate = true;
     }
@@ -234,7 +234,7 @@ function saveArticle(article, url) {
 }
 
 function updateArticle(articleDocument, article) {
-    if(!articleRequiresUpdate(articleDocument, article)) {
+    if(articleRequiresUpdate(articleDocument, article)) {    
         articleDocument.title = article.title;
         articleDocument.description = article.description;
         articleDocument.link = article.link;
@@ -263,22 +263,22 @@ function updateArticle(articleDocument, article) {
 function articleRequiresUpdate(articleDocument, article) {
     var requiresUpdate = false;
     
-    if(articleDocument.title == article.title &&
-        articleDocument.description == article.description &&
-        articleDocument.link == article.link &&
-        articleDocument.origLink == article.origLink &&
-        articleDocument.author == article.author &&
-        articleDocument.guid == article.guid &&
-        articleDocument.comments == article.comments &&
-        articleDocument.image.title == article.image.title &&
-        articleDocument.image.url == article.image.url &&
-        JSON.stringify(articleDocument.categories) ==
+    if(articleDocument.title != article.title &&
+        articleDocument.description != article.description &&
+        articleDocument.link != article.link &&
+        articleDocument.origLink != article.origLink &&
+        articleDocument.author != article.author &&
+        articleDocument.guid != article.guid &&
+        articleDocument.comments != article.comments &&
+        articleDocument.image.title != article.image.title &&
+        articleDocument.image.url != article.image.url &&
+        JSON.stringify(articleDocument.categories) !=
             JSON.stringify(article.categories) &&
-        articleDocument.source.title == article.source.title &&
-        articleDocument.source.url == article.source.url &&
-        articleDocument.enclosures.url == article.enclosures.url &&
-        articleDocument.enclosures.type == article.enclosures.type &&
-        articleDocument.enclosures.length == article.enclosures.length) {        
+        articleDocument.source.title != article.source.title &&
+        articleDocument.source.url != article.source.url &&
+        articleDocument.enclosures.url != article.enclosures.url &&
+        articleDocument.enclosures.type != article.enclosures.type &&
+        articleDocument.enclosures.length != article.enclosures.length) {        
         requiresUpdate = true;
     }
     
