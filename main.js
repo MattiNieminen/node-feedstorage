@@ -94,7 +94,7 @@ function requestAndParseFeed(url) {
 }
 
 function createRequest(url) {
-    var request = { uri: url, timeout: timeoutInMs };
+    var request = { url: url, timeout: timeoutInMs };
     return request;
 }
 
