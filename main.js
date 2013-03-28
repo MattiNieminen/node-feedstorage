@@ -50,6 +50,7 @@ var Article = mongoose.model('Article', articleSchema);
 
 var timeoutInMs = 10000;
 var defaultMongoDbPort = 27017; 
+var updateIntervalHandle = null;
 
 function connect(uri, database, port) {
     port = typeof port !== 'undefined' ? port : defaultMongoDbPort;
@@ -313,6 +314,23 @@ function updateDatabase() {
     });
 }
 
+function updateDatabaseAtInterval(seconds) {
+    if(updateIntervalHandle == null) {
+        updateIntervalHandle = setInterval(updateDatabase, seconds);
+    }
+    else {
+        console.warn('Database update interval already set. Skipping.');
+    }
+}
+
+function stopUpdateDataBaseAtInterval() {
+    if(updateIntervalHandle != null) {
+        clearInterval(updateIntervalHandle);
+    }
+}
+
 exports.connect = connect;
 exports.addFeed = addFeed;
 exports.updateDatabase = updateDatabase;
+exports.updateDatabaseAtInterval = updateDatabaseAtInterval;
+exports.stopUpdateDataBaseAtInterval = stopUpdateDataBaseAtInterval;
