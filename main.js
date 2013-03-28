@@ -16,7 +16,8 @@ var feedSchema = mongoose.Schema({
     favicon:          String,
     copyright:        String,
     generator:        String,
-    categories:       [String]
+    categories:       [String],
+    lastModified:     String
 });
 
 feedSchema.virtual('url').get(function () {
@@ -103,8 +104,10 @@ function handleResponse(url, error, response, body) {
         console.error('Failed to handle HTTP response: '+error);
     }
     else if (response.statusCode == 200) {
+        var lastModified = getLastModifiedFromResponseHeaders(response.headers);
         feedparser.parseString(body)
-        .on('meta', function(meta) { saveOrUpdateFeedMeta(meta, url) })
+        .on('meta', function(meta) { saveOrUpdateFeedMeta(meta, url,
+            lastModified) })
         .on('article', function(article) { saveOrUpdateArticle(article, url) })
         .on('error', function(error) { handleParseError(error, url) });
     }
@@ -121,24 +124,36 @@ function handleParseError(error, url) {
     console.error('Could not parse feed at '+url+'. '+error);
 }
 
-function saveOrUpdateFeedMeta(meta, url) {
+function getLastModifiedFromResponseHeaders(headers) {    
+    var lastModified = null;
+    
+    for(var headerName in headers){
+        if(headerName.toLowerCase() == 'last-modified') {
+            lastModified = headers[headerName];
+        }
+    }
+    
+    return lastModified;
+}
+
+function saveOrUpdateFeedMeta(meta, url, lastModified) {
     Feed.findOne({ _id: url }, function(error, feedDocument) {
         if(error != null) {
             console.error('Failed to get feed from MongoDB: '+error);
         }
         else {
             if(feedDocument == null) {
-                saveFeedMeta(meta, url);
+                saveFeedMeta(meta, url, lastModified);
             }
             else {
-                updateFeedMeta(feedDocument, meta, url);
+                updateFeedMeta(feedDocument, meta, url, lastModified);
             }
         }
     });  
 }
 
-function saveFeedMeta(meta, url) {
-    var feedDocument = createFeedDocument(meta, url);
+function saveFeedMeta(meta, url, lastModified) {
+    var feedDocument = createFeedDocument(meta, url, lastModified);
         
     feedDocument.save(function (error, feedDocument) {
         if(error != null) {
@@ -150,8 +165,8 @@ function saveFeedMeta(meta, url) {
     });
 }
 
-function updateFeedMeta(feedDocument, meta) {
-    if(feedRequiresUpdate(feedDocument, meta)) {
+function updateFeedMeta(feedDocument, meta, lastModified) {
+    if(feedRequiresUpdate(feedDocument, meta, lastModified)) {
         feedDocument.title = meta.title;
         feedDocument.description = meta.description;
         feedDocument.link = meta.link;
@@ -165,6 +180,7 @@ function updateFeedMeta(feedDocument, meta) {
         feedDocument.copyright = meta.copyright;
         feedDocument.generator = meta.generator;
         feedDocument.categories = meta.categories;
+        feedDocument.lastModified = lastModified;
     
         feedDocument.save(function (error, feedDocument) {
             if(error != null) {
@@ -177,7 +193,7 @@ function updateFeedMeta(feedDocument, meta) {
     } 
 }
 
-function feedRequiresUpdate(feedDocument, meta) {
+function feedRequiresUpdate(feedDocument, meta, lastModified) {
     var requiresUpdate = false;
     
     if(feedDocument.title != meta.title &&
@@ -192,20 +208,21 @@ function feedRequiresUpdate(feedDocument, meta) {
         feedDocument.copyright != meta.copyright &&
         feedDocument.generator != meta.generator &&
         JSON.stringify(feedDocument.categories) !=
-            JSON.stringify(meta.categories)) {        
+            JSON.stringify(meta.categories) &&
+        feedDocument.lastModified != lastModified) {        
         requiresUpdate = true;
     }
     
     return requiresUpdate;
 }
 
-function createFeedDocument(meta, url) {
+function createFeedDocument(meta, url, lastModified) {
     return new Feed({ url: url, title: meta.title,
         description: meta.description, link: meta.link, xmlUrl: meta.xmlUrl,
         date: meta.date, pubDate: meta.pubDate, author: meta.author,
         language: meta.language, image: meta.image, favicon: meta.favicon,
         copyright: meta.copyright, generator: meta.generator,
-        categories: meta.categories });
+        categories: meta.categories, lastModified: lastModified });
 }
 
 function saveOrUpdateArticle(article, url) {
