@@ -90,13 +90,28 @@ function addFeed(url) {
 }
 
 function requestAndParseFeed(url) {
-    request(createRequest(url), function(error, response, body)
-        { handleResponse(url, error, response, body) });
+    var requestObject = createDefaultRequest(url);
+    
+    Feed.findOne({ _id: url }, 'lastModified', function(error,
+        partialFeedDocument) {
+        if(error != null) {
+            console.error('Failed to get feeds Last-Modified from MongoDB: '+
+                error);
+        }
+        else if(partialFeedDocument != null && 
+            partialFeedDocument.lastModified != null) {
+            requestObject.headers = { 'If-Modified-Since':
+                partialFeedDocument.lastModified }
+        }
+        
+        request(requestObject, function(error, response, body) {
+            handleResponse(url, error, response, body)
+        });
+    });
 }
 
-function createRequest(url) {
-    var request = { url: url, timeout: timeoutInMs };
-    return request;
+function createDefaultRequest(url) {
+    return { url: url, timeout: timeoutInMs };
 }
 
 function handleResponse(url, error, response, body) {
