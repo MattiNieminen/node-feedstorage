@@ -327,6 +327,7 @@ function updateDatabaseAtInterval(seconds) {
 function stopUpdateDataBaseAtInterval() {
     if(updateIntervalHandle != null) {
         clearInterval(updateIntervalHandle);
+        updateIntervalHandle = null;
     }
 }
 
