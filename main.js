@@ -49,9 +49,10 @@ var articleSchema = mongoose.Schema({
 var Article = mongoose.model('Article', articleSchema);
 
 var timeoutInMs = 10000;
+var defaultMongoDbPort = 27017; 
 
 function connect(uri, database, port) {
-    port = typeof port !== 'undefined' ? port : 27017;
+    port = typeof port !== 'undefined' ? port : defaultMongoDbPort;
     mongoose.connect(uri, database, port);
     
     mongoose.connection.on('error', function(e){
