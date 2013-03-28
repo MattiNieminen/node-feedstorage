@@ -98,7 +98,7 @@ function createRequest(url) {
 
 function handleResponse(url, error, response, body) {
     if(error != null) {
-        console.error('error: '+error);
+        console.error('Failed to handle HTTP response: '+error);
     }
     else if (response.statusCode == 200) {
         feedparser.parseString(body)
