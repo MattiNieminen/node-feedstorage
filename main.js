@@ -48,6 +48,8 @@ var articleSchema = mongoose.Schema({
 
 var Article = mongoose.model('Article', articleSchema);
 
+var timeoutInMs = 10000;
+
 function connect(uri, database, port) {
     port = typeof port !== 'undefined' ? port : 27017;
     mongoose.connect(uri, database, port);
@@ -89,7 +91,7 @@ function requestAndParseFeed(url) {
 }
 
 function createRequest(url) {
-    var request = { uri: url };
+    var request = { uri: url, timeout: timeoutInMs };
     return request;
 }
 
