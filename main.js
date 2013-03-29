@@ -362,8 +362,25 @@ function stopUpdateDataBaseAtInterval() {
     }
 }
 
+function getArticlesByKeyword(keyword, limit, callback) {
+    var searchTerm = new RegExp('.*(\\s|-)+'+keyword+'(\\s|-)+.*', 'i');
+    
+    var query = Article.find({ $or: [ { title: searchTerm }, { description:
+    searchTerm }, { author: searchTerm } ] }).limit(limit);
+    
+    query.execFind(function (error, articleDocuments) {
+        if(error != null) {
+            console.error('Failed to get articles from MongoDB: '+error);
+        }
+        else {
+            callback(articleDocuments);
+        }
+    });  
+}
+
 exports.connect = connect;
 exports.addFeed = addFeed;
 exports.updateDatabase = updateDatabase;
 exports.updateDatabaseAtInterval = updateDatabaseAtInterval;
 exports.stopUpdateDataBaseAtInterval = stopUpdateDataBaseAtInterval;
+exports.getArticlesByKeyword = getArticlesByKeyword;
