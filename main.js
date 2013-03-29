@@ -430,7 +430,7 @@ function logError(message) {
 }
 
 function getTimeStampForLog() {
-    return new Date().toUTCString();;
+    return new Date().toUTCString();
 }
 
 exports.connect = connect;
