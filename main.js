@@ -378,9 +378,15 @@ function getArticlesByKeyword(keyword, limit, callback) {
     });  
 }
 
+function getArticlesByKeywordArray(keywords, limit, callback) {
+    var keyword = '('+keywords.join('|')+')'; 
+    getArticlesByKeyword(keyword, limit, callback);
+}
+
 exports.connect = connect;
 exports.addFeed = addFeed;
 exports.updateDatabase = updateDatabase;
 exports.updateDatabaseAtInterval = updateDatabaseAtInterval;
 exports.stopUpdateDataBaseAtInterval = stopUpdateDataBaseAtInterval;
 exports.getArticlesByKeyword = getArticlesByKeyword;
+exports.getArticlesByKeywordArray = getArticlesByKeywordArray;
