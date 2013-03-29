@@ -110,6 +110,17 @@ function removeArticlesByFeedUrl(url) {
     });
 }
 
+function removeArticlesOlderThan(days) {
+    var oldArticleDate = new Date();
+    oldArticleDate.setDate(oldArticleDate.getDate()-days);
+    
+    Article.remove({ date: { $lt: oldArticleDate } }, function (error) {
+        if(error != null) {
+            logError('Failed to remove articles older than '+days+': '+error);
+        }
+    });
+}
+
 function requestAndParseFeed(url) {
     var requestObject = createDefaultRequest(url);
     
@@ -349,7 +360,8 @@ function articleRequiresUpdate(articleDocument, article) {
 function createArticleDocument(article, url) {
     return new Article({ title: article.title,
         description: article.description, link: article.link,
-        origLink: article.origLink, author: article.author, guid: article.guid,
+        origLink: article.origLink, date: article.date,
+        pubDate: article.pubDate, author: article.author, guid: article.guid,
         comments: article.comments, image: article.image,
         categories: article.categories, source: article.source,
         enclosures: article.enclosures, feed: url });
@@ -429,3 +441,4 @@ exports.stopUpdateDataBaseAtInterval = stopUpdateDataBaseAtInterval;
 exports.getArticlesByKeyword = getArticlesByKeyword;
 exports.getArticlesByKeywordArray = getArticlesByKeywordArray;
 exports.removeFeed = removeFeed;
+exports.removeArticlesOlderThan = removeArticlesOlderThan;
