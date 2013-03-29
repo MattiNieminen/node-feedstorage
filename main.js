@@ -45,14 +45,13 @@ var articleSchema = mongoose.Schema({
     source:           { title: String, url: String },
     enclosures:       [{ url: String, type: String, length: String }],
     feed:             { type: String, ref: 'Feed' },
-}, { capped: capForArticlesInBytes });
+});
 
 var Article = mongoose.model('Article', articleSchema);
 
 var timeoutInMs = 10000;
 var defaultMongoDbPort = 27017; 
 var updateIntervalHandle = null;
-var capForArticlesInBytes = 100000;
 
 function connect(uri, database, port) {
     port = typeof port !== 'undefined' ? port : defaultMongoDbPort;
