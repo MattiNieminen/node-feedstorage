@@ -1,6 +1,6 @@
 {
-  "name": "node-feedstorage",
-  "version": "0.0.1",
+  "name": "feedstorage",
+  "version": "0.1.0",
   "description": "Storage for feed URLs and feed items using MongoDB.",
   "main": "main.js",
   "scripts": {
