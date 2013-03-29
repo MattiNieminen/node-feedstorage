@@ -58,30 +58,30 @@ function connect(uri, database, port) {
     mongoose.connect(uri, database, port);
     
     mongoose.connection.on('error', function(e){
-        console.error("Could not connect to MongoDB: "+e.message);
+        logError("Could not connect to MongoDB: "+e.message);
         process.exit(1);
     });
     
     mongoose.connection.once('open', function callback () {
-        console.log("Connection to MongoDB was successful.");
+        logDebug("Connection to MongoDB was successful.");
     });
 }
 
 function addFeed(url) {
     Feed.count({ _id: url }, function(error, count) {
         if(error != null) {
-            console.error('Failed to check if feed exists in MongoDB: '+error);
+            logError('Failed to check if feed exists in MongoDB: '+error);
         }
         else {
             if(count == 0) {
                requestAndParseFeed(url);
             }
             else if(count == 1) {
-                console.warn('Feed '+url+' already exists in the MongoDB. '
+                logWarning('Feed '+url+' already exists in the MongoDB. '
                 + 'Skipping adding new feed to the storage.');
             }
             else {
-                console.error('Multiple documents with same url exist in '
+                logError('Multiple documents with same url exist in '
                 + 'MongoDB. This should not happen!');
             }
         }
@@ -94,7 +94,7 @@ function requestAndParseFeed(url) {
     Feed.findOne({ _id: url }, 'lastModified', function(error,
         partialFeedDocument) {
         if(error != null) {
-            console.error('Failed to get feeds Last-Modified from MongoDB: '+
+            logError('Failed to get feeds Last-Modified from MongoDB: '+
                 error);
         }
         else if(partialFeedDocument != null && 
@@ -115,7 +115,7 @@ function createDefaultRequest(url) {
 
 function handleResponse(url, error, response, body) {
     if(error != null) {
-        console.error('Failed to handle HTTP response: '+error);
+        logError('Failed to handle HTTP response: '+error);
     }
     else if (response.statusCode == 200) {
         var lastModified = getLastModifiedFromResponseHeaders(response.headers);
@@ -126,16 +126,16 @@ function handleResponse(url, error, response, body) {
         .on('error', function(error) { handleParseError(error, url) });
     }
     else if (response.statusCode == 304) {
-        console.log('Feed '+url+' not modified (304). Skipping parsing.' );
+        logDebug('Feed '+url+' not modified (304). Skipping parsing.' );
     }
     else {
-        console.warn('HTTP status code received that can not be handled by '
+        logWarning('HTTP status code received that can not be handled by '
             + 'this module: '+response.statusCode);
     }
 }
 
 function handleParseError(error, url) {
-    console.error('Could not parse feed at '+url+'. '+error);
+    logError('Could not parse feed at '+url+'. '+error);
 }
 
 function getLastModifiedFromResponseHeaders(headers) {    
@@ -153,7 +153,7 @@ function getLastModifiedFromResponseHeaders(headers) {
 function saveOrUpdateFeedMeta(meta, url, lastModified) {
     Feed.findOne({ _id: url }, function(error, feedDocument) {
         if(error != null) {
-            console.error('Failed to get feed from MongoDB: '+error);
+            logError('Failed to get feed from MongoDB: '+error);
         }
         else {
             if(feedDocument == null) {
@@ -171,10 +171,10 @@ function saveFeedMeta(meta, url, lastModified) {
         
     feedDocument.save(function (error, feedDocument) {
         if(error != null) {
-            console.error('Failed to save feed meta to MongoDB: '+error);
+            logError('Failed to save feed meta to MongoDB: '+error);
         }
         else {
-            console.log('Added new feed "'+feedDocument.url+'" to MongoDB.');
+            logDebug('Added new feed "'+feedDocument.url+'" to MongoDB.');
         }
     });
 }
@@ -198,10 +198,10 @@ function updateFeedMeta(feedDocument, meta, lastModified) {
     
         feedDocument.save(function (error, feedDocument) {
             if(error != null) {
-                console.error('Failed to update feed meta to MongoDB: '+error);
+                logError('Failed to update feed meta to MongoDB: '+error);
             }
             else {
-                console.log('Updated feed "'+feedDocument.url+'" in MongoDB.');
+                logDebug('Updated feed "'+feedDocument.url+'" in MongoDB.');
             }
         });
     } 
@@ -243,7 +243,7 @@ function saveOrUpdateArticle(article, url) {
     Article.findOne({ guid: article.guid, feed: url }, function(error,
         articleDocument) {
         if(error != null) {
-            console.error('Failed to get article from MongoDB: '+error);
+            logError('Failed to get article from MongoDB: '+error);
         }
         else {
             if(articleDocument == null) {
@@ -261,10 +261,10 @@ function saveArticle(article, url) {
         
     articleDocument.save(function (error, articleDocument) {
         if(error != null) {
-            console.error('Failed to save article to MongoDB: '+error);
+            logError('Failed to save article to MongoDB: '+error);
         }
         else {
-            console.log('Added new article "'+articleDocument.guid
+            logDebug('Added new article "'+articleDocument.guid
             + '" to MongoDB.');
         }
     });
@@ -288,10 +288,10 @@ function updateArticle(articleDocument, article) {
     
         articleDocument.save(function (error, feedDocument) {
             if(error != null) {
-                console.error('Failed to update article to MongoDB: '+error);
+                logError('Failed to update article to MongoDB: '+error);
             }
             else {
-                console.log('Updated article "'+articleDocument.guid
+                logDebug('Updated article "'+articleDocument.guid
                 +'" in MongoDB.');
             }
         });
@@ -336,7 +336,7 @@ function createArticleDocument(article, url) {
 function updateDatabase() {
     Feed.find(function(error, feedDocuments) {
         if(error != null) {
-            console.error('Failed to get feeds from MongoDB: '+error);
+            logError('Failed to get feeds from MongoDB: '+error);
         }
         else {
             feedDocuments.forEach(function(feedDocument) {
@@ -351,7 +351,7 @@ function updateDatabaseAtInterval(seconds) {
         updateIntervalHandle = setInterval(updateDatabase, seconds);
     }
     else {
-        console.warn('Database update interval already set. Skipping.');
+        logWarning('Database update interval already set. Skipping.');
     }
 }
 
@@ -370,7 +370,7 @@ function getArticlesByKeyword(keyword, limit, callback) {
     
     query.execFind(function (error, articleDocuments) {
         if(error != null) {
-            console.error('Failed to get articles from MongoDB: '+error);
+            logError('Failed to get articles from MongoDB: '+error);
         }
         else {
             callback(articleDocuments);
@@ -381,6 +381,22 @@ function getArticlesByKeyword(keyword, limit, callback) {
 function getArticlesByKeywordArray(keywords, limit, callback) {
     var keyword = '('+keywords.join('|')+')'; 
     getArticlesByKeyword(keyword, limit, callback);
+}
+
+function logDebug(message) {
+    console.log(getTimeStampForLog()+' [DEBUG] '+message);
+}
+
+function logWarning(message) {
+    console.warn(getTimeStampForLog()+' [WARN] '+message);
+}
+
+function logError(message) {
+    console.error(getTimeStampForLog()+' [ERROR] '+message);
+}
+
+function getTimeStampForLog() {
+    return new Date().toUTCString();;
 }
 
 exports.connect = connect;
