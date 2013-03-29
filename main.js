@@ -88,6 +88,28 @@ function addFeed(url) {
     });
 }
 
+function removeFeed(url) {
+    Feed.findByIdAndRemove(url, function(error, feedDocument) {
+        if(error != null) {
+            logError('Failed to find feed to be removed: '+error);
+        }
+        else if(feedDocument != null) {
+            setTimeout(function() { removeArticlesByFeedUrl(url) }, 5000);
+        }
+        else {
+            logWarn('Feed not found with url '+url+'. Skipping removing.');
+        }
+    });
+}
+
+function removeArticlesByFeedUrl(url) {
+    Article.remove({ feed: url }, function (error) {
+        if(error != null) {
+            logError('Failed to find articles to be removed: '+error);
+        }
+    });
+}
+
 function requestAndParseFeed(url) {
     var requestObject = createDefaultRequest(url);
     
@@ -406,3 +428,4 @@ exports.updateDatabaseAtInterval = updateDatabaseAtInterval;
 exports.stopUpdateDataBaseAtInterval = stopUpdateDataBaseAtInterval;
 exports.getArticlesByKeyword = getArticlesByKeyword;
 exports.getArticlesByKeywordArray = getArticlesByKeywordArray;
+exports.removeFeed = removeFeed;
