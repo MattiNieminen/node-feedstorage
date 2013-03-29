@@ -397,11 +397,23 @@ function stopUpdateDataBaseAtInterval() {
 }
 
 function getArticlesByKeyword(keyword, limit, callback) {
+    var query = createQueryForArticles(keyword, limit);
+    executeArticleQuery(query, callback);
+}
+
+function getArticlesByKeywordArray(keywords, limit, callback) {
+    var keyword = '('+keywords.join('|')+')'; 
+    getArticlesByKeyword(keyword, limit, callback);
+}
+
+function createQueryForArticles(keyword, limit) {
     var searchTerm = new RegExp('.*(\\s|-)+'+keyword+'(\\s|-)+.*', 'i');
     
-    var query = Article.find({ $or: [ { title: searchTerm }, { description:
+    return Article.find({ $or: [ { title: searchTerm }, { description:
     searchTerm }, { author: searchTerm } ] }).limit(limit);
-    
+}
+
+function executeArticleQuery(query, callback) {
     query.execFind(function (error, articleDocuments) {
         if(error != null) {
             logError('Failed to get articles from MongoDB: '+error);
@@ -410,11 +422,6 @@ function getArticlesByKeyword(keyword, limit, callback) {
             callback(articleDocuments);
         }
     });  
-}
-
-function getArticlesByKeywordArray(keywords, limit, callback) {
-    var keyword = '('+keywords.join('|')+')'; 
-    getArticlesByKeyword(keyword, limit, callback);
 }
 
 function logDebug(message) {
