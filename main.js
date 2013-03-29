@@ -78,7 +78,7 @@ function addFeed(url) {
             }
             else if(count == 1) {
                 console.warn('Feed '+url+' already exists in the MongoDB. '
-                + 'Skipping database write.');
+                + 'Skipping adding new feed to the storage.');
             }
             else {
                 console.error('Multiple documents with same url exist in '
