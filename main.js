@@ -290,7 +290,8 @@ function updateArticle(articleDocument, article) {
                 console.error('Failed to update article to MongoDB: '+error);
             }
             else {
-                console.log('Updated article "'+articleDocument.guid+'" in MongoDB.');
+                console.log('Updated article "'+articleDocument.guid
+                +'" in MongoDB.');
             }
         });
     } 
