@@ -54,7 +54,7 @@ var defaultMongoDbPort = 27017;
 var updateIntervalHandle = null;
 
 function connect(uri, database, port) {
-    port = typeof port !== 'undefined' ? port : defaultMongoDbPort;
+    port = port || defaultMongoDbPort;
     mongoose.connect(uri, database, port);
     
     mongoose.connection.on('error', function(e){
