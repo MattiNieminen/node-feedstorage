@@ -240,7 +240,8 @@ function createFeedDocument(meta, url, lastModified) {
 }
 
 function saveOrUpdateArticle(article, url) {
-    Article.findOne({ guid: article.guid, feed: url }, function(error, articleDocument) {
+    Article.findOne({ guid: article.guid, feed: url }, function(error,
+        articleDocument) {
         if(error != null) {
             console.error('Failed to get article from MongoDB: '+error);
         }
