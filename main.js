@@ -418,13 +418,13 @@ function createQueryForArticles(keyword, options) {
             searchTerm }, { author: searchTerm } ] };
                                     
     if(typeof options.from != 'undefined') {
-        criteria.date = criteria.date || {};
-        criteria.date.$gte = options.from;
+        criteria.savedAt = criteria.savedAt || {};
+        criteria.savedAt.$gte = options.from;
     }
     
     if(typeof options.to != 'undefined') {
-        criteria.date = criteria.date || {};
-        criteria.date.$lte = options.to;
+        criteria.savedAt = criteria.savedAt || {};
+        criteria.savedAt.$lte = options.to;
     }
         
     var query = Article.find(criteria);
