@@ -160,7 +160,7 @@ function handleResponse(url, error, response, body) {
         .on('error', function(error) { handleParseError(error, url) });
     }
     else if (response.statusCode == 304) {
-        logDebug('Feed '+url+' not modified (304). Skipping parsing.' );
+        //Do nothing
     }
     else {
         logWarning('HTTP status code received that can not be handled by '
