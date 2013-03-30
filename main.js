@@ -45,6 +45,7 @@ var articleSchema = mongoose.Schema({
     source:           { title: String, url: String },
     enclosures:       [{ url: String, type: String, length: String }],
     feed:             { type: String, ref: 'Feed' },
+    savedAt:          { type: Date }
 });
 
 var Article = mongoose.model('Article', articleSchema);
@@ -364,7 +365,7 @@ function createArticleDocument(article, url) {
         pubDate: article.pubDate, author: article.author, guid: article.guid,
         comments: article.comments, image: article.image,
         categories: article.categories, source: article.source,
-        enclosures: article.enclosures, feed: url });
+        enclosures: article.enclosures, feed: url, savedAt: new Date() });
 }
 
 function updateDatabase() {
