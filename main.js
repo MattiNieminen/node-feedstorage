@@ -396,21 +396,43 @@ function stopUpdateDataBaseAtInterval() {
     }
 }
 
-function getArticlesByKeyword(keyword, limit, callback) {
-    var query = createQueryForArticles(keyword, limit);
+function getArticlesByKeyword(keyword, options, callback) {
+    if(typeof callback == 'undefined' && typeof options == 'function') {
+        callback = options;
+        options = {};
+    }
+    
+    var query = createQueryForArticles(keyword, options);
     executeArticleQuery(query, callback);
 }
 
-function getArticlesByKeywordArray(keywords, limit, callback) {
+function getArticlesByKeywordArray(keywords, options, callback) {
     var keyword = '('+keywords.join('|')+')'; 
-    getArticlesByKeyword(keyword, limit, callback);
+    getArticlesByKeyword(keyword, options, callback);
 }
 
-function createQueryForArticles(keyword, limit) {
+function createQueryForArticles(keyword, options) {
     var searchTerm = new RegExp('.*(\\s|-)+'+keyword+'(\\s|-)+.*', 'i');
+    var criteria = { $or: [ { title: searchTerm }, { description:
+            searchTerm }, { author: searchTerm } ] };
+                                    
+    if(typeof options.from != 'undefined') {
+        criteria.date = criteria.date || {};
+        criteria.date.$gte = options.from;
+    }
     
-    return Article.find({ $or: [ { title: searchTerm }, { description:
-    searchTerm }, { author: searchTerm } ] }).limit(limit);
+    if(typeof options.to != 'undefined') {
+        criteria.date = criteria.date || {};
+        criteria.date.$lte = options.to;
+    }
+        
+    var query = Article.find(criteria);
+    
+    if(typeof options.limit != 'undefined') {
+        query.limit(options.limit);
+    }
+
+    return query;
 }
 
 function executeArticleQuery(query, callback) {
