@@ -433,7 +433,7 @@ function createQueryForArticles(keyword, options) {
         query.limit(options.limit);
     }
 
-    query.sort({savedAt: 'asc'});
+    query.sort({savedAt: 'desc'});
 
     return query;
 }
