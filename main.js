@@ -434,6 +434,7 @@ function createQueryForArticles(keyword, options) {
     }
 
     query.sort({savedAt: 'desc'});
+    query.populate('feed', 'title');
 
     return query;
 }
