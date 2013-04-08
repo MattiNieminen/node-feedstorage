@@ -417,7 +417,10 @@ function getArticlesByKeywordArray(keywords, options, callback) {
 }
 
 function createQueryForArticles(keyword, options) {
-    var searchTerm = new RegExp('.*(\\s|-)+'+keyword+'(\\s|-)+.*', 'i');
+    var allowedCharsBeforeAndAfter = '\\s|\\.|\,|\!|\\?|:|-|_||\'|"|@|#|\$|'
+        +'%|&|\\(|\\)|\\[|\\]|{|}|\\+'; 
+    var searchTerm = new RegExp('.*(^|'+allowedCharsBeforeAndAfter+')+'
+        +keyword+'('+allowedCharsBeforeAndAfter+'|$)+.*', 'i');
     var criteria = { $or: [ { title: searchTerm }, { description:
             searchTerm }, { author: searchTerm } ] };
                                     
