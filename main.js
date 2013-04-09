@@ -417,7 +417,7 @@ function getArticlesByKeywordArray(keywords, options, callback) {
 }
 
 function createQueryForArticles(keyword, options) {
-    var allowedCharsBeforeAndAfter = '\\s|\\.|\,|\!|\\?|:|-|_||\'|"|@|#|\$|'
+    var allowedCharsBeforeAndAfter = '\\s|\\.|\,|\!|\\?|:|-|_|\'|"|@|#|\$|'
         +'%|&|\\(|\\)|\\[|\\]|{|}|\\+'; 
     var searchTerm = new RegExp('.*(^|'+allowedCharsBeforeAndAfter+')+'
         +keyword+'('+allowedCharsBeforeAndAfter+'|$)+.*', 'i');
