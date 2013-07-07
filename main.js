@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
-var feedparser = require('feedparser')
+var FeedParser = require('feedparser');
 var request = require('request');
+var Stream = require('stream');
 
 var feedSchema = mongoose.Schema({
     _id:              { type: String, required: true, unique: true },
@@ -157,14 +158,33 @@ function handleResponse(url, error, response, body) {
     }
     else if (response.statusCode == 200) {
         var lastModified = getLastModifiedFromResponseHeaders(response.headers);
-        feedparser.parseString(body)
-        .on('meta', function(meta) { saveOrUpdateFeedMeta(meta, url,
-            lastModified) })
-        .on('article', function(article) { saveOrUpdateArticle(article, url) })
-        .on('error', function(error) { handleParseError(error, url) });
+        
+        //Feedparser no longer supports string, so convert body to stream again
+        //his is a little dirty, but needed because before parsing the body
+        //it is a good idea to check http status code and Last-Modified
+        var bodyAsStream = Stream.PassThrough();
+        bodyAsStream.write(body);
+        bodyAsStream.end();
+        
+        bodyAsStream.pipe(new FeedParser())
+        .on('error', function (error) {
+            handleParseError(error, url);
+        })
+        .on('meta', function (meta) {
+            saveOrUpdateFeedMeta(meta, url, lastModified);
+        })
+        .on('readable', function() {
+            var stream = this;
+            var article;
+            
+            while (article = stream.read()) {
+                saveOrUpdateArticle(article, url);
+            }
+            
+        });
     }
     else if (response.statusCode == 304) {
-        //Do nothing
+    
     }
     else {
         logWarning('HTTP status code received that can not be handled by '
