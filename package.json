@@ -23,7 +23,9 @@
   "dependencies": {
    "mongoose": "",
    "feedparser": "",
-   "request": ""
+   "request": "",
+   "chardet": "",
+   "iconv-lite": ""
  }
   
 }

@@ -2,6 +2,8 @@ var mongoose = require('mongoose');
 var FeedParser = require('feedparser');
 var request = require('request');
 var Stream = require('stream');
+var chardet = require('chardet');
+var iconv = require('iconv-lite');
 
 var feedSchema = mongoose.Schema({
     _id:              { type: String, required: true, unique: true },
@@ -149,7 +151,7 @@ function requestAndParseFeed(url) {
 }
 
 function createDefaultRequest(url) {
-    return { url: url, timeout: timeoutInMs };
+    return { url: url, timeout: timeoutInMs, encoding: null };
 }
 
 function handleResponse(url, error, response, body) {
@@ -158,6 +160,7 @@ function handleResponse(url, error, response, body) {
     }
     else if (response.statusCode == 200) {
         var lastModified = getLastModifiedFromResponseHeaders(response.headers);
+        body = getBufferAsUtf8Buffer(body);
         
         //Feedparser no longer supports string, so convert body to stream again
         //his is a little dirty, but needed because before parsing the body
@@ -190,6 +193,17 @@ function handleResponse(url, error, response, body) {
         logWarning('HTTP status code received that can not be handled by '
             + 'this module: '+response.statusCode);
     }
+}
+
+function getBufferAsUtf8Buffer(buffer) {
+    var encoding = chardet.detect(buffer);
+    
+    if(encoding != 'UTF-8') {
+        decodedString = iconv.decode(buffer, encoding);
+        buffer = iconv.encode(decodedString, 'utf8');
+    }
+    
+    return buffer;
 }
 
 function handleParseError(error, url) {
