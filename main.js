@@ -23,13 +23,6 @@ var feedSchema = mongoose.Schema({
     lastModified:     String
 });
 
-feedSchema.virtual('url').get(function () {
-  return this._id;
-});
-
-feedSchema.virtual('url').set(function (url) {
-  this._id = url;
-});
 
 var Feed = mongoose.model('Feed', feedSchema);
 
@@ -242,7 +235,7 @@ function saveFeedMeta(meta, url, lastModified) {
             logError('Failed to save feed meta to MongoDB: '+error);
         }
         else {
-            logDebug('Added new feed "'+feedDocument.url+'" to MongoDB.');
+            logDebug('Added new feed "'+feedDocument._id+'" to MongoDB.');
         }
     });
 }
@@ -269,7 +262,7 @@ function updateFeedMeta(feedDocument, meta, lastModified) {
                 logError('Failed to update feed meta to MongoDB: '+error);
             }
             else {
-                logDebug('Updated feed "'+feedDocument.url+'" in MongoDB.');
+                logDebug('Updated feed "'+feedDocument._id+'" in MongoDB.');
             }
         });
     } 
@@ -299,7 +292,7 @@ function feedRequiresUpdate(feedDocument, meta, lastModified) {
 }
 
 function createFeedDocument(meta, url, lastModified) {
-    return new Feed({ url: url, title: meta.title,
+    return new Feed({ _id: url, title: meta.title,
         description: meta.description, link: meta.link, xmlUrl: meta.xmlUrl,
         date: meta.date, pubDate: meta.pubDate, author: meta.author,
         language: meta.language, image: meta.image, favicon: meta.favicon,
@@ -409,7 +402,7 @@ function updateDatabase() {
         }
         else {
             feedDocuments.forEach(function(feedDocument) {
-                requestAndParseFeed(feedDocument.url);
+                requestAndParseFeed(feedDocument._id);
             });
         }
     });
