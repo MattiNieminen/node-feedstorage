@@ -51,10 +51,6 @@ var articleSchema = mongoose.Schema({
     savedAt:          { type: Date }
 });
 
-articleSchema.virtual('savedAgo').get(function () {
-    return new Date()-this.savedAt;
-});
-
 var Article = mongoose.model('Article', articleSchema);
 
 var timeoutInMs = 10000;
