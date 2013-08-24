@@ -151,8 +151,8 @@ function handleResponse(url, error, response, body) {
         var lastModified = getLastModifiedFromResponseHeaders(response.headers);
         body = getBufferAsUtf8Buffer(body);
         
-        //Feedparser no longer supports string, so convert body to stream again
-        //his is a little dirty, but needed because before parsing the body
+        //Feedparser no longer supports string, so convert body to stream again.
+        //This is a little dirty, but needed because before parsing the body
         //it is a good idea to check http status code and Last-Modified
         var bodyAsStream = Stream.PassThrough();
         bodyAsStream.write(body);
