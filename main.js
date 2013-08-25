@@ -408,9 +408,9 @@ function updateDatabase() {
     });
 }
 
-function updateDatabaseAtInterval(seconds) {
+function updateDatabaseAtInterval(milliseconds) {
     if(updateIntervalHandle == null) {
-        updateIntervalHandle = setInterval(updateDatabase, seconds);
+        updateIntervalHandle = setInterval(updateDatabase, milliseconds);
     }
     else {
         logWarning('Database update interval already set. Skipping.');
