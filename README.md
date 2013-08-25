@@ -97,8 +97,8 @@ Is your database filling up? Remove old articles like this:
 ```javascript
 feedstorage.removeArticlesOlderThan(days);
 ```
+## Todo
 
-
-
-
+* Usage of HTTP header ETag
+* More options
 
