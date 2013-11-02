@@ -470,7 +470,7 @@ function createQueryForArticles(keyword, options) {
 }
 
 function executeArticleQuery(query, callback) {
-    query.execFind(function (error, articleDocuments) {
+    query.exec(function (error, articleDocuments) {
         if(error != null) {
             logError('Failed to get articles from MongoDB: '+error);
         }
