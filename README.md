@@ -101,4 +101,5 @@ feedstorage.removeArticlesOlderThan(days);
 
 * Usage of HTTP header ETag
 * More options
-
+* Unit testing is probably not applicable here, but maybe some integration tests
+  with real feeds?
