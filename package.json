@@ -4,7 +4,7 @@
   "description": "Storage for feed URLs and feed items using MongoDB.",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -21,11 +21,14 @@
   "readmeFilename": "README.md",
   "gitHead": "044a8e06bdb1fe85e4844b5c860c5c7eb7cdac6e",
   "dependencies": {
-   "mongoose": "",
-   "feedparser": "",
-   "request": "",
-   "chardet": "",
-   "iconv-lite": ""
- }
-  
+    "mongoose": "",
+    "feedparser": "",
+    "request": "",
+    "chardet": "",
+    "iconv-lite": ""
+  },
+  "devDependencies": {
+    "mocha": "",
+    "chai": ""
+  }
 }
