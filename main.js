@@ -71,7 +71,7 @@ function addFeed(url) {
         }
         else {
             if(count == 0) {
-               requestAndParseFeed(url);
+                requestAndParseFeed(url);
             }
             else if(count == 1) {
                 logWarning('Feed '+url+' already exists in the MongoDB. '
