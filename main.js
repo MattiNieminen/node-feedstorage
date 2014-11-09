@@ -50,9 +50,11 @@ var timeoutInMs = 10000;
 var defaultMongoDbPort = 27017; 
 var updateIntervalHandle = null;
 
-function connect(uri, database, port) {
-    port = port || defaultMongoDbPort;
-    mongoose.connect(uri, database, port);
+function connect(options) {
+    options.port = options.port || defaultMongoDbPort;
+    options.callback = options.callback || function() {};
+
+    mongoose.connect(options.uri, options.database, options.port);
     
     mongoose.connection.on('error', function(e){
         logError("Could not connect to MongoDB: "+e.message);
@@ -61,6 +63,7 @@ function connect(uri, database, port) {
     
     mongoose.connection.once('open', function callback () {
         logDebug("Connection to MongoDB was successful.");
+        options.callback();
     });
 }
 
