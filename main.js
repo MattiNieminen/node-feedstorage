@@ -67,14 +67,14 @@ function connect(options) {
     });
 }
 
-function addFeed(url) {
+function addFeed(url, callback) {
     Feed.count({ _id: url }, function(error, count) {
         if(error != null) {
             logError('Failed to check if feed exists in MongoDB: '+error);
         }
         else {
             if(count == 0) {
-                requestAndParseFeed(url);
+                requestAndParseFeed(url, callback);
             }
             else if(count == 1) {
                 logWarning('Feed '+url+' already exists in the MongoDB. '
@@ -88,13 +88,13 @@ function addFeed(url) {
     });
 }
 
-function removeFeed(url) {
+function removeFeed(url, callback) {
     Feed.findByIdAndRemove(url, function(error, feedDocument) {
         if(error != null) {
             logError('Failed to find feed to be removed: '+error);
         }
         else if(feedDocument != null) {
-            setTimeout(function() { removeArticlesByFeedUrl(url) }, 5000);
+            removeArticlesByFeedUrl(url, callback);
         }
         else {
             logWarn('Feed not found with url '+url+'. Skipping removing.');
@@ -102,11 +102,12 @@ function removeFeed(url) {
     });
 }
 
-function removeArticlesByFeedUrl(url) {
+function removeArticlesByFeedUrl(url, callback) {
     Article.remove({ feed: url }, function (error) {
         if(error != null) {
             logError('Failed to find articles to be removed: '+error);
         }
+        callback();
     });
 }
 
@@ -121,7 +122,7 @@ function removeArticlesOlderThan(days) {
     });
 }
 
-function requestAndParseFeed(url) {
+function requestAndParseFeed(url, callback) {
     var requestObject = createDefaultRequest(url);
     
     Feed.findOne({ _id: url }, 'lastModified', function(error,
@@ -137,7 +138,7 @@ function requestAndParseFeed(url) {
         }
         
         request(requestObject, function(error, response, body) {
-            handleResponse(url, error, response, body)
+            handleResponse(url, error, response, body, callback);
         });
     });
 }
@@ -146,7 +147,7 @@ function createDefaultRequest(url) {
     return { url: url, timeout: timeoutInMs, encoding: null };
 }
 
-function handleResponse(url, error, response, body) {
+function handleResponse(url, error, response, body, callback) {
     if(error != null) {
         logError('Failed to handle HTTP response: '+error);
     }
@@ -176,6 +177,9 @@ function handleResponse(url, error, response, body) {
                 saveOrUpdateArticle(article, url);
             }
             
+        })
+        .on('end', function() {
+            callback();
         });
     }
     else if (response.statusCode == 304) {
