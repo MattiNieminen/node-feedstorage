@@ -17,14 +17,16 @@ Connecting to running MongoDB instance:
 
 ```javascript
 var feedstorage = require('./node-feedstorage');
-//port and callback are optional
+// Port and callback are optional
 feedstorage.connect({uri: 'localhost', database: 'myDatabase', port: 27017, callback: function() {}});
 ```
 
 Adding feed to database and automatically parse articles from it:
 
 ```javascript
-feedstorage.addFeed('http://rss.cnn.com/rss/edition.rss');
+feedstorage.addFeed('http://rss.cnn.com/rss/edition.rss', function() {
+	// This is a success callback, which gets called when the response stream emits end event.
+});
 ```
 
 Note: Parsing happens only if the returned HTTP status code is 200 (OK). Feedstorage supports 304 (Not modified) and does not cause useless overhead.
@@ -53,7 +55,7 @@ Saving feeds would be useless without a way to query the database:
 
 ```javascript
 feedstorage.getArticlesByKeyword(keywordAsString, options, function(articles) {
-    //This is callback
+    // This is a callback.
          
     articles.forEach(function(article) {
         console.log(article.title);
@@ -81,17 +83,19 @@ from.setMinutes(from.getMinutes() - 500);
 var limit = 15;
 
 feedstorage.getArticlesByKeywordArray(keywords, {from: from, limit: limit}, function(articles) {
-    //This is callback
+    // This is a callback.
 });
 ```
 
 Finally, to remove feeds from database:
 
 ```javascript
-feedstorage.removeFeed(url);
+feedstorage.removeFeed(url, function() {
+	//This is success callback, which gets called when the feed and its articles have been removed.
+});
 ```
 
-The above code will also set timeout for removing all articles related to that feed.
+The above code will also remove all articles related to that feed.
 
 Is your database filling up? Remove old articles like this:
 
@@ -100,7 +104,11 @@ feedstorage.removeArticlesOlderThan(days);
 ```
 ## Todo
 
-* Usage of HTTP header ETag
-* More options
-* Unit testing is probably not applicable here, but maybe some integration tests
-  with real feeds?
+* Usage of HTTP header ETag.
+* More options.
+* Refactor function getArticlesByKeyword to use options object instead of variadic.
+* More integration tests (at least different query functions and updateDatabase()).
+* Divide helper functions and Mongoose schemas to its own file.
+* Rewrite the parts using request and feedparser so that streams are used correctly
+ * Probably requires a "global" feedparser and a function that initializes request and streams it to this feedparser.
+ * Due to streams being what they are in Node.js, it is probably mandatory to handle this in one long function.
