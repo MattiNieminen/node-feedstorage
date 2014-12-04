@@ -68,6 +68,8 @@ function connect(options) {
 }
 
 function addFeed(url, callback) {
+    callback = callback || function() {};
+
     Feed.count({ _id: url }, function(error, count) {
         if(error != null) {
             logError('Failed to check if feed exists in MongoDB: '+error);
@@ -89,6 +91,8 @@ function addFeed(url, callback) {
 }
 
 function removeFeed(url, callback) {
+    callback = callback || function() {};
+
     Feed.findByIdAndRemove(url, function(error, feedDocument) {
         if(error != null) {
             logError('Failed to find feed to be removed: '+error);
@@ -412,7 +416,7 @@ function updateDatabase() {
         }
         else {
             feedDocuments.forEach(function(feedDocument) {
-                requestAndParseFeed(feedDocument._id);
+                requestAndParseFeed(feedDocument._id, function() {});
             });
         }
     });
