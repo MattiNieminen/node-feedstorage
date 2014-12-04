@@ -18,7 +18,9 @@ Connecting to running MongoDB instance:
 ```javascript
 var feedstorage = require('./node-feedstorage');
 // Port and callback are optional
-feedstorage.connect({uri: 'localhost', database: 'myDatabase', port: 27017, callback: function() {}});
+feedstorage.connect({uri: 'localhost', database: 'myDatabase', port: 27017, callback: function() {
+	// This is a success callback.
+}});
 ```
 
 Adding feed to database and automatically parse articles from it:
